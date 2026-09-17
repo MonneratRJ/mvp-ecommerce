@@ -17,6 +17,24 @@ Este projeto estrutura um pipeline de dados na nuvem (Databricks, arquitetura Me
 - **Origem dos dados:** Os dados brutos foram obtidos no repositório Kaggle através do conjunto de dados público _Brazilian E-Commerce Public Dataset by Olist_ [4]. O dataset contém informações reais de aproximadamente 100 mil pedidos realizados no Brasil entre 2016 e 2018 [4].
 - **Licença de Uso:** Os dados são disponibilizados sob a licença **CC BY-NC-SA 4.0** (Uso não comercial, com atribuição e compartilhamento igual) [4].
 
+### Estrutura dos Dados Brutos
+
+O dataset é composto por 8 arquivos CSV (mais uma tabela auxiliar de tradução de categorias), cada um representando uma entidade do negócio da Olist:
+
+| Arquivo (CSV)                           | Linhas    | Conteúdo                                                             |
+| --------------------------------------- | --------- | -------------------------------------------------------------------- |
+| `olist_orders_dataset.csv`              | 99.441    | Um registro por pedido: status e datas do ciclo de vida do pedido    |
+| `olist_customers_dataset.csv`           | 99.441    | Um registro por cliente (por pedido): localização (cidade/UF/CEP)    |
+| `olist_order_items_dataset.csv`         | 112.650   | Um registro por item de pedido: produto, vendedor, preço, frete      |
+| `olist_order_payments_dataset.csv`      | 103.886   | Um registro por pagamento: forma de pagamento, parcelas, valor       |
+| `olist_order_reviews_dataset.csv`       | 104.164   | Um registro por avaliação: nota (1-5) e comentário do cliente        |
+| `olist_products_dataset.csv`            | 32.951    | Um registro por produto: categoria, peso e dimensões físicas         |
+| `olist_sellers_dataset.csv`             | 3.095     | Um registro por vendedor: localização (cidade/UF)                    |
+| `olist_geolocation_dataset.csv`         | 1.000.163 | CEP ↔ latitude/longitude (não utilizada pelas 2 perguntas deste MVP) |
+| `product_category_name_translation.csv` | 71        | Tradução do nome da categoria de português para inglês               |
+
+As tabelas se relacionam por chaves como `order_id`, `product_id`, `customer_id` e `seller_id`. A descrição completa de cada coluna, tipo de dado e domínio de valores está documentada na camada Bronze do catálogo de dados: [docs/catalogo_dados.md](./docs/catalogo_dados.md#camada-bronze-raw).
+
 ## 3. Perguntas de Negócio a serem Respondidas
 
 Com o pipeline estruturado, buscaremos responder às seguintes perguntas analíticas:
@@ -30,7 +48,7 @@ _[a preencher após execução no Databricks: como os 9 CSVs foram enviados ao V
 
 ## 5. Modelagem e Catálogo de Dados (Etapa 4.3)
 
-Modelo em Esquema Estrela: 1 tabela fato (`fato_vendas`) cercada de 4 dimensões (`dim_clientes`, `dim_produtos`, `dim_vendedores`, `dim_avaliacoes`). Catálogo de dados completo, com descrição de cada tabela/campo, domínio de valores e linhagem: [.copilot/catalogo_dados.md](./.copilot/catalogo_dados.md).
+Modelo em Esquema Estrela: 1 tabela fato (`fato_vendas`) cercada de 4 dimensões (`dim_clientes`, `dim_produtos`, `dim_vendedores`, `dim_avaliacoes`). Catálogo de dados completo, com descrição de cada tabela/campo, domínio de valores e linhagem: [docs/catalogo_dados.md](./docs/catalogo_dados.md).
 
 _[a preencher: screenshots do Unity Catalog/Data Explorer mostrando o schema `olist_gold` com as 5 tabelas]_
 
@@ -47,7 +65,7 @@ _[a preencher: screenshots confirmando a persistência das tabelas em cada schem
 
 ## 7. Qualidade de Dados (Etapa 4.5)
 
-Ver seção "Resumo de Qualidade de Dados" em [.copilot/catalogo_dados.md](./.copilot/catalogo_dados.md), que documenta completude, consistência, unicidade, acurácia e outliers verificados em cada camada, e como cada problema foi tratado (ex.: produtos com peso/dimensão ≤ 0 removidos na Silver; nulos em peso/dimensão mantidos e excluídos explicitamente na análise).
+Ver seção "Resumo de Qualidade de Dados" em [docs/catalogo_dados.md](./docs/catalogo_dados.md), que documenta completude, consistência, unicidade, acurácia e outliers verificados em cada camada, e como cada problema foi tratado (ex.: produtos com peso/dimensão ≤ 0 removidos na Silver; nulos em peso/dimensão mantidos e excluídos explicitamente na análise).
 
 ## 8. Análise de Dados (Etapa 4.5)
 
