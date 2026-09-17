@@ -21,8 +21,8 @@ Este projeto estrutura um pipeline de dados na nuvem (Databricks, arquitetura Me
 
 Com o pipeline estruturado, buscaremos responder às seguintes perguntas analíticas:
 
-1.  **Frete vs. porte físico do produto:** quais categorias de produto pagam mais frete por quilo/volume transportado, e isso é proporcional ao porte físico ou indica ineficiência logística/pricing?
-2.  **Concentração de problemas em vendedores:** um grupo pequeno de vendedores concentra a maior parte dos atrasos e notas baixas (padrão 80/20), ou o problema está distribuído por todos?
+1.  **Os custos de frete estão adequados?** Quais categorias de produto pagam mais frete por quilo/volume transportado, e isso é proporcional ao porte físico do produto ou indica ineficiência logística/pricing?
+2.  **Os vendedores têm respeitado os prazos de entrega?** Um grupo pequeno de vendedores concentra a maior parte dos atrasos e notas baixas (padrão 80/20), ou o problema está distribuído por todos?
 
 ## 4. Carga dos Dados (Etapa 4.2)
 
@@ -51,9 +51,20 @@ Ver seção "Resumo de Qualidade de Dados" em [.copilot/catalogo_dados.md](./.co
 
 ## 8. Análise de Dados (Etapa 4.5)
 
-- **Pergunta 1 (frete vs. porte físico):** _[preencher após rodar `03_business_analysis.ipynb` — categoria com pior `frete_medio_por_kg`, comparação com `volume_medio_m3`]_
-- **Pergunta 2 (concentração por vendedor):** _[preencher — percentual de atrasos/notas baixas concentrado no decil 1 de vendedores]_
+- **Pergunta 1 (os custos de frete estão adequados?):** Não. O custo de frete é muito alto para produtos pequenos/leves quando comparado a produtos grandes/pesados. Categorias leves (`telefonia`, `fashion_esporte`, `fashion_underwear_e_moda_praia`) pagam entre R$ 53 e R$ 60 por kg, enquanto categorias de móveis pesados (`moveis_escritorio`, `moveis_quarto`, `moveis_sala`) pagam entre R$ 3,56 e R$ 4,41 por kg — até 17x menos. O frete absoluto cresce pouco entre essas pontas (~2,6x) frente ao peso (~43x), indicando uma tarifa mínima/fixa por envio que penaliza itens leves. Recomendação: verificar alternativas para baratear o custo de frete de produtos pequenos/leves.
+- **Pergunta 2 (os vendedores têm respeitado os prazos de entrega?):** Cerca de 20% dos vendedores concentram quase 75% dos atrasos e 68,5% das notas baixas, enquanto os melhores 20% não registraram nenhum atraso. Recomendação: priorizar maior auditoria e um plano de ação comercial focado nesses piores vendedores (renegociação de SLA, revisão de transportadora, ou desligamento em casos extremos). Outra sugestão é oferecer premiações aos melhores vendedores, seja com maior visibilidade de seus produtos, um selo de qualidade, etc.
 
 ## 9. Autoavaliação
 
-_[a preencher ao final: objetivos atingidos, dificuldades encontradas, trabalhos futuros]_
+**Objetivos atingidos:** o pipeline completo (Bronze → Silver → Gold) foi construído e as duas
+perguntas de negócio definidas na Etapa 2 foram respondidas com evidência quantitativa: (1) o
+custo de frete não é proporcional ao porte físico do produto, penalizando categorias leves; e
+(2) os atrasos e notas baixas estão fortemente concentrados em ~20% dos vendedores, confirmando
+o padrão 80/20. Os objetivos de modelagem (Esquema Estrela), catálogo de dados e qualidade de
+dados também foram cumpridos conforme documentado nas seções 5 e 7.
+
+**Trabalhos futuros:** enriquecer o modelo com a tabela `geolocation` (calcular distância real
+entre vendedor e cliente e correlacionar com o frete e o atraso); construir um modelo preditivo
+de risco de atraso por vendedor/pedido; automatizar o pipeline com jobs agendados no Databricks
+em vez de execução manual dos notebooks; criar um dashboard (Databricks SQL ou ferramenta de BI)
+para monitoramento contínuo dos indicadores de frete e SLA por vendedor.
