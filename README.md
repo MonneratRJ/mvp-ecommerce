@@ -44,13 +44,17 @@ Com o pipeline estruturado, buscaremos responder às seguintes perguntas analít
 
 ## 4. Carga dos Dados (Etapa 4.2)
 
-_[a preencher após execução no Databricks: como os 9 CSVs foram enviados ao Volume `mvp_ecommerce`, screenshot da estrutura do Volume, referência aos notebooks `notebooks/00_bronze_ingestion.ipynb` a `03_business_analysis.ipynb`]_
+Os 8 CSVs (todos exceto `product_category_name_translation.csv`, que não é utilizado pelas 2 perguntas deste MVP) foram enviados manualmente ao Volume `workspace.mvp_ecommerce.mvp_ecommerce` no Databricks Free Edition, via upload direto pela interface de Catalog Explorer. A partir daí, o notebook [`notebooks/00_bronze_ingestion.ipynb`](./notebooks/00_bronze_ingestion.ipynb) lê cada arquivo do Volume e grava como tabela Delta no schema `workspace.olist_bronze`, dando início ao pipeline (`00_bronze_ingestion.ipynb` → `03_business_analysis.ipynb`).
+
+![Estrutura do Volume com os CSVs enviados](docs/images/databricks_volume.png)
 
 ## 5. Modelagem e Catálogo de Dados (Etapa 4.3)
 
 Modelo em Esquema Estrela: 1 tabela fato (`fato_vendas`) cercada de 4 dimensões (`dim_clientes`, `dim_produtos`, `dim_vendedores`, `dim_avaliacoes`). Catálogo de dados completo, com descrição de cada tabela/campo, domínio de valores e linhagem: [docs/catalogo_dados.md](./docs/catalogo_dados.md).
 
-_[a preencher: screenshots do Unity Catalog/Data Explorer mostrando o schema `olist_gold` com as 5 tabelas]_
+![Catalog Explorer com os schemas olist_bronze, olist_gold e olist_silver](docs/images/catalog_explorer.png)
+
+> Nota: o schema `olist_gold` ainda contém a tabela `dim_tempo`, um artefato remanescente de uma iteração anterior do modelo (não utilizada pelas 2 perguntas de negócio nem referenciada no catálogo de dados atual).
 
 ## 6. Pipeline de Dados (Etapa 4.4)
 
@@ -61,7 +65,7 @@ Pipeline organizado em 4 notebooks, um por camada/etapa, seguindo a arquitetura 
 3. [`notebooks/02_gold_star_schema.ipynb`](./notebooks/02_gold_star_schema.ipynb) — modela a fato e as 4 dimensões em `olist_gold`.
 4. [`notebooks/03_business_analysis.ipynb`](./notebooks/03_business_analysis.ipynb) — responde às 2 perguntas de negócio com SQL sobre a camada Gold.
 
-_[a preencher: screenshots confirmando a persistência das tabelas em cada schema no Databricks]_
+A persistência das tabelas em cada schema (`olist_bronze`, `olist_silver`, `olist_gold`) está evidenciada no print do Catalog Explorer na seção 5 acima.
 
 ## 7. Qualidade de Dados (Etapa 4.5)
 
